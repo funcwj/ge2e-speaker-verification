@@ -82,8 +82,8 @@ class SimpleTimer(object):
 class GE2ELoss(nn.Module):
     def __init__(self):
         super(GE2ELoss, self).__init__()
-        self.w = nn.Parameter(th.tensor(10.0), requires_grad=True)
-        self.b = nn.Parameter(th.tensor(-5.0), requires_grad=True)
+        self.w = nn.Parameter(th.tensor(10.0))
+        self.b = nn.Parameter(th.tensor(-5.0))
 
     def forward(self, e, N, M):
         """

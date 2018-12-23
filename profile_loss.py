@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # wujian@2018
 
 import time
