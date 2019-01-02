@@ -10,8 +10,6 @@ epochs=50
 
 echo "$0 $@"
 
-. ./utils/parse_options.sh || exit 1
-
 [ $# -ne 2 ] && echo "Script format error: $0 <gpuid> <cpt-id>" && exit 1
 
 ./ge2e/train_ge2e.py \

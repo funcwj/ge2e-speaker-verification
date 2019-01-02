@@ -34,8 +34,8 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=
-        "Command to run permutate invariant training, auto configured from pit_config.py",
+        description="Command to train speaker embedding model using GE2E loss, "
+        "auto configured from conf.py",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         "--gpu", type=str, default=0, help="Training on which GPUs")

@@ -5,6 +5,9 @@ import json
 
 
 def dump_json(obj, fdir, name):
+    """
+    Serialize python object as json
+    """
     if fdir and not os.path.exists(fdir):
         os.makedirs(fdir)
     with open(os.path.join(fdir, name), "w") as f:
@@ -12,6 +15,9 @@ def dump_json(obj, fdir, name):
 
 
 def load_json(fdir, name):
+    """
+    Load json file as python object
+    """
     path = os.path.join(fdir, name)
     if not os.path.exists(path):
         raise FileNotFoundError("Could not find json file: {}".format(path))

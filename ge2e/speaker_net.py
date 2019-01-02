@@ -75,7 +75,6 @@ def foo_lstm():
         "embedding_dim": 256,
         "lstm_conf": lstm_conf
     }
-
     nnet = SpeakerNet(**nnet_conf)
     x = th.rand(100, 40)
     x = nnet(x)

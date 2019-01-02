@@ -1,6 +1,6 @@
 # nnet opts
 
-lstm_conf = {"num_layers": 3, "hidden_size": 738, "dropout": 0.5}
+lstm_conf = {"num_layers": 3, "hidden_size": 738, "dropout": 0.2}
 
 nnet_conf = {"feature_dim": 40, "embedding_dim": 256, "lstm_conf": lstm_conf}
 
@@ -19,6 +19,6 @@ trainer_conf = {
 
 # loader opts
 
-train_steps = 200000
-dev_steps = 10000
+train_steps = 5000
+dev_steps = 1000
 chunk_size = (140, 180)
