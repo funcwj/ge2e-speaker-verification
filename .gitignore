@@ -1,4 +1,5 @@
 .vscode/
 __pycache__/
 ge2e/libs/
-.*.py
+*.py
+*.yaml

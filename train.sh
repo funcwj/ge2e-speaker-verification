@@ -3,8 +3,9 @@
 
 set -eu
 
-train_dir=data/train
-dev_dir=data/dev
+train_steps=2500
+dev_steps=800
+chunk_size="140,180"
 cpt_dir=exp/ge2e
 epochs=50
 
@@ -12,12 +13,13 @@ echo "$0 $@"
 
 [ $# -ne 2 ] && echo "Script format error: $0 <gpuid> <cpt-id>" && exit 1
 
-./ge2e/train_ge2e.py \
+./nnet/train_ge2e.py \
   --M 10 \
   --N 64 \
   --gpu $1 \
   --epochs $epochs \
-  --train $train_dir \
-  --dev $dev_dir \
+  --train-steps $train_steps \
+  --dev-steps $dev_steps \
+  --chunk-size $chunk_size \
   --checkpoint $cpt_dir/$2 \
   > $2.train.log 2>&1 
