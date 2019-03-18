@@ -10,15 +10,13 @@ opt_kwargs = {"lr": 1e-2, "weight_decay": 1e-5, "momentum": 0.8}
 trainer_conf = {
     "optimizer": "sgd",
     "optimizer_kwargs": opt_kwargs,
-    "clip_norm": 3,
+    "clip_norm": 10,
     "min_lr": 1e-8,
-    "patience": 3,
+    "patience": 2,
     "factor": 0.5,
-    "logging_period": 1000  # steps
+    "no_impr": 6,
+    "logging_period": 200  # steps
 }
 
-# loader opts
-
-train_steps = 5000
-dev_steps = 1000
-chunk_size = (140, 180)
+train_dir = "data/train"
+dev_dir = "data/dev"

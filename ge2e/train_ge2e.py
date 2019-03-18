@@ -3,31 +3,43 @@
 # wujian@2018
 
 import os
+import pprint
 import argparse
 import random
 
-from speaker_net import SpeakerNet
-from trainer import GE2ETrainer
+from nnet import Nnet
+from trainer import GE2ETrainer, get_logger
 from dataset import SpeakerLoader
 from utils import dump_json
-from conf import nnet_conf, trainer_conf, train_steps, dev_steps, chunk_size
+from conf import nnet_conf, trainer_conf, train_dir, dev_dir
+
+logger = get_logger(__name__)
 
 
 def run(args):
-    gpuids = tuple(map(int, args.gpu.split(",")))
-    nnet = SpeakerNet(**nnet_conf)
+    parse_str = lambda s: tuple(map(int, s.split(",")))
+    nnet = Nnet(**nnet_conf)
 
     trainer = GE2ETrainer(
-        nnet, gpuid=gpuids, checkpoint=args.checkpoint, **trainer_conf)
+        nnet,
+        gpuid=parse_str(args.gpu),
+        checkpoint=args.checkpoint,
+        resume=args.resume,
+        **trainer_conf)
 
-    loader_conf = {"M": args.M, "N": args.N, "chunk_size": chunk_size}
+    loader_conf = {
+        "M": args.M,
+        "N": args.N,
+        "chunk_size": parse_str(args.chunk_size)
+    }
     for conf, fname in zip([nnet_conf, trainer_conf, loader_conf],
                            ["mdl.json", "trainer.json", "loader.json"]):
         dump_json(conf, args.checkpoint, fname)
 
     train_loader = SpeakerLoader(
-        args.train, **loader_conf, num_steps=train_steps)
-    dev_loader = SpeakerLoader(args.dev, **loader_conf, num_steps=dev_steps)
+        train_dir, **loader_conf, num_steps=args.train_steps)
+    dev_loader = SpeakerLoader(
+        dev_dir, **loader_conf, num_steps=args.dev_steps)
 
     trainer.run(train_loader, dev_loader, num_epochs=args.epochs)
 
@@ -54,8 +66,25 @@ if __name__ == "__main__":
         default=10,
         help="Number of utterances for each speaker")
     parser.add_argument(
-        "--train", type=str, required=True, help="Data directory for training")
+        "--train-steps",
+        type=int,
+        default=5000,
+        help="Number of training steps in one epoch")
     parser.add_argument(
-        "--dev", type=str, required=True, help="Data directory for evaluation")
+        "--dev-steps",
+        type=int,
+        default=800,
+        help="Number of validation steps in one epoch")
+    parser.add_argument(
+        "--chunk-size",
+        type=str,
+        default="140,180",
+        help="Range of chunk size, eg: 140,180")
+    parser.add_argument(
+        "--resume",
+        type=str,
+        default="",
+        help="Checkpoint to resume training process")
     args = parser.parse_args()
+    logger.info("Arguments in command:\n{}".format(pprint.pformat(vars(args))))
     run(args)

@@ -5,12 +5,12 @@ Pytorch implement of "Generalized End-to-End Loss for Speaker Verification"
 ### Data Processing
 
 1. Vad (recommend [py-webrtcvad](https://github.com/wiseman/py-webrtcvad))
-2. Features (recommend [librosa](https://github.com/librosa/librosa))
+2. Log mel-spectrogram features (recommend [librosa](https://github.com/librosa/librosa))
 3. Prepare data as `data/{train,dev}/{feats.scp,spk2utt}`
 
 ### Usage
 
-see [train.sh](train.sh) and [compute_dvector.py](compute_dvector.py)
+see [train.sh](train.sh) and [compute_dvector.py](ge2e/compute_dvector.py)
 
 ### Reference
 

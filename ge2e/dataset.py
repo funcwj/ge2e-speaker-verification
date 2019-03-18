@@ -1,32 +1,33 @@
 # wujian@2018
 
-import os
 import random
+import os.path as op
 
 import numpy as np
 import torch as th
 
-from libs.data_handler import ScriptReader, parse_scps
+from kaldi_python_io import Reader, ScriptReader
 
 
 class SpeakerSampler(object):
     """
     Remember to filter speakers which utterance number lower than M
     """
+
     def __init__(self, data_dir):
-        depends = [os.path.join(data_dir, x) for x in ["feats.scp", "spk2utt"]]
+        depends = [op.join(data_dir, x) for x in ["feats.scp", "spk2utt"]]
         for depend in depends:
-            if not os.path.exists(depend):
+            if not op.exists(depend):
                 raise RuntimeError("Missing {}!".format(depend))
         self.reader = ScriptReader(depends[0])
-        self.spk2utt = parse_scps(depends[1], num_tokens=-1)
+        self.spk2utt = Reader(depends[1], num_tokens=-1)
 
     def sample(self, N=64, M=10, chunk_size=(140, 180)):
         """
         N: number of spks
         M: number of utts
         """
-        spks = random.sample(list(self.spk2utt), N)
+        spks = random.sample(self.spk2utt.index_keys, N)
         chunks = []
         eg = dict()
         eg["N"] = N
@@ -40,19 +41,15 @@ class SpeakerSampler(object):
                     format(spk, M))
             samp_utts = random.sample(utt_sets, M)
             for uttid in samp_utts:
-                feats = self.reader[uttid]
-                T, F = feats.shape
-                if T >= C:
-                    start = random.randint(0, T - C)
-                    chunks.append(feats[start:start + C])
+                utt = self.reader[uttid]
+                pad = C - utt.shape[0]
+                if pad < 0:
+                    start = random.randint(0, -pad)
+                    chunks.append(utt[start:start + C])
                 else:
-                    chunk = np.zeros([C, F])
-                    for i in range(0, C - T):
-                        chunk[i] = feats[0]
-                    chunk[C - T: ] = feats
+                    chunk = np.pad(utt, ((pad, 0), (0, 0)), "edge")
                     chunks.append(chunk)
-        feats = np.stack(chunks)
-        eg["feats"] = th.tensor(feats, dtype=th.float32)
+        eg["feats"] = th.from_numpy(np.stack(chunks))
         return eg
 
 
